@@ -1,0 +1,182 @@
+\documentclass[a4paper, 10pt]{article}
+
+
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+
+
+
+\begin{document}
+\newtheorem{example}{Zgled}
+\newtheorem{theorem}{Izrek}
+\newtheorem{proof}{Dokaz}
+\newtheorem{definition}{Definicija}
+\newtheorem{lemma}{Lema}
+
+\thispagestyle{empty}
+{\large
+\noindent Univerza v Ljubljani\\[1mm]
+Fakulteta za matematiko in fiziko\\[5mm]}
+\vfill
+
+\begin{center}{\Large
+{\bf Odpornost snarkov}\\[2mm]
+Vanja Kalaković in Eva Strašek\\[10mm]
+Mentorja: Janoš Vidali, Riste Škrekovski\\[2mm]
+Predmet: Finančna matematika \\[2mm]}
+\end{center}
+\vfill
+
+{\large
+Ljubljana, 2023}
+\pagebreak
+
+
+
+\section{Uvod}
+
+Najprej bomo opredelili, kaj snarki sploh so.
+
+\begin{definition}
+    Če so vsa vozlišča grafa G enake stopnje k, pravimo, da je graf
+k-regularen; 3-regularnim grafom pravimo tudi kubični grafi.
+\end{definition}
+\begin{definition}
+    Kromatični indeks grafa $G$ je število $\chi'(G)$, ki predstavlja najmanjše 
+    število barv, ki jih potrebujemo za barvanje povezav grafa G tako,
+    da so sosednje povezave pobarvane različno.
+\end{definition}
+\begin{definition}
+    Snark je ciklično 4-povezan kubičen graf z notranjim obsegom vsaj 5 in 
+    kromatičnim indeksom 4. Snark reda $n$ in velikosti $m$ označimo z $S(n,m)$.
+\end{definition}
+
+ 
+\subsection*{Zgodovina snarkov}
+Snark je svoje ime dobil leta 1976, ko ga je Markin Gardner poimenoval po skrivnostnem 
+predmetu iz pesmi The Hunting of the Snark Lewisa Carrolla. \\
+Prvi znani snark, Petersenov graf, je odkril Julius Petersen in zanj velja, da ima 10 vozlišč
+in 15 povezav ter je najmanjši snark. V naslednjih letih so matematiki odrili nekaj manjših
+snarkov, dokler ni do leta 1975 ameriški matematik Isaacs posplošil metodo, hrvaškega
+matematika Blanuša, za izgradnjo dveh neskončnih družin snarkov, in sicer za družino
+snarkov v obliki cvetja in za Blanuša-Descartes-Szekersov snark. Isaacs je odkril tudi snark 
+poimenovan dvojna zvezda.  
+
+\subsection*{Odpornost povezav in vozlišč}
+
+\begin{theorem}{Vizingov izrek}
+    Za enostaven graf G z maksimalno stopnjo $\Delta$(G) velja
+    $\Delta$(G) $\leq \chi$'(G) $\leq \Delta$(G) + 1. 
+\end{theorem}
+
+\begin{definition}
+    Predpostavimo, da imamo graf $G = (V,E)$. Odpornost povezav $er(G)$ je je najmanjše 
+    število $k$ povezav, ki jih je treba odstraniti, da postane graf $G$ $k$-robno obarljiv. 
+\end{definition}
+
+Koda, s katero sma računali odpornost povezav snarkov:
+\begin{lstlisting}
+    def odpornost_povezav(graf):
+        seznam_odpornosti = list(zero_vector(60))
+        for i in range(60):
+            graf1 = copy(graf)
+            odpornost = 0
+            while graf1.chromatic_index() != 3:
+                u,v = graf1.random_edge(labels=False)
+                graf1.delete_edge(u,v)
+                odpornost += 1
+            seznam_odpornosti[i] = odpornost
+        return min(seznam_odpornosti)
+\end{lstlisting}
+\pagebreak
+
+\begin{definition}
+    Predpostavimo, da imamo graf $G = (V,E)$. Odpornost vozlišč $vr(G)$ je najmanjše število $k$
+    vozlišč $E$, ki jih je treba odstraniti, da postane graf $G$ $k$-robno obarljiv.
+\end{definition}
+
+Koda, s katero sma izračunali odpornost vozlišč snarkov: 
+\begin{lstlisting}
+    def odpornost_vozlisc(graf):
+        seznam_odpornosti = list(zero_vector(30))
+        for i in range(30):
+            graf1 = copy(graf)
+            odpornost = 0
+            while graf1.chromatic_index() != 3:
+                u = graf1.random_vertex()
+                graf1.delete_vertex(u)
+                odpornost += 1
+                seznam_odpornosti[i] = odpornost
+        return min(seznam_odpornosti)
+\end{lstlisting}
+
+\subsection*{Predstavitev rezultatov}
+
+V spodnji tabeli vidimo odpornosti povezav in odpornosti vozlišč kot sva
+jih izračunali s pomočjo najine kode.
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        snark & št. vozl. & št. povez. & odpor. povez. & odpor. vozl. \\
+        \hline
+        Petersenov graf & 10 & 15 & 2 & 2 \\ 
+        \hline
+        Graf 2760 & 18 & 27 & 2 & 2 \\
+        \hline
+        Flower snark J5 & 20 & 30 & 2 & 2 \\
+        \hline
+        Loupekines snark 1 & 22 & 33 & 2 & 2 \\
+        \hline
+        Loupekines snark 2 & 22 & 33 & 2 & 2 \\ 
+        \hline
+        Golberg snark 3 & 24 & 36 & 2 & 2 \\
+        \hline
+        Celmins Swart snark 1 & 26 & 39 & 2 & 2\\
+        \hline 
+        Celmins Swart snark 2 & 26 & 39 & 2 & 2\\
+        \hline
+        Flower snark J5 & 28 & 42 & 2 & 2 \\
+        \hline
+        Double star snark & 30 & 35 & 2 & 2 \\
+        \hline
+        Graf 3337 & 34 & 51 & 2 & 2 \\
+        \hline
+        Graf 3363 & 36 & 54 & 2 & 2 \\
+        \hline
+        Golberg snark 5 & 40 & 60 & 2 & 2 \\
+        \hline
+        Graf 25159 & 44 & 66 & 3 & 3 \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+Ugotovili sva, da velja da za vsak poljuben snark velja, da je njegova $vr(G) \ge 2$ in
+njegova $er(G) \ge 2$. Poleg tega velja $er(G) \ge vr(G) $ Ugotovili sva, da so najmanjši
+snarki, katerih $vr(G) \ge 3$ snarki z 44 vozlišči in 66 povezavami.
+
+
+
+
+\pagebreak
+\subsection*{Potek dela:}
+Najprej sva napisali program, ki je izračunal odpornost vozlišč $vr(G)$ in program, ki je 
+izračunal odpornost povezav $er(G)$ za snarke, ki sva jih prenesli iz House of Graphs.
+Programa sta v vsakem koraku iz danega snarka izbrisala eno naključno povezavo in vozlišče ter
+preverila, ali se je kromatični indeks snarka zmanjšal. Če se kromatični indeks snarka ni 
+spremenil, je program iz novonastalega grafa izbrisal še eno naključno povezavo ali vozlišče. To je 
+ponavljal, dokler kromatični indeks grafa ni bil enak 3. Ker je program odstranjeval naključne
+povezave, je bilo treba to kodo večkrat ponoviti in izbrali najmanjše število povezav ali vozlišč izmed
+izračunanih, da je vrednost odpornosti natančna. 
+Nato sva primerjali odpornost vozlišč in odpornost povezav danih snarkov. Na koncu sva s poskušanjem 
+poiskali najmanjši snark za katerega velja, da ima $vr(G) \ge 3$.
+
+
+
+
+
+\end{document}
