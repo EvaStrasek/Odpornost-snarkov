@@ -74,10 +74,22 @@ poimenovan dvojna zvezda.
 \end{theorem}
 
 \begin{definition}
-    Predpostavimo, da imamo graf $G = (V,E)$. Odpornost povezav $er(G)$ je je najmanjše 
-    število $k$ povezav, ki jih je treba odstraniti, da postane graf $G$ $k$-robno obarljiv. 
+    Snark je kritičen, če zanj velja, da če snarku odstranimo dve sosednji vozlišči postane 3-robno pobarljiv. 
 \end{definition}
 
+\begin{definition}
+    Snark je bikritičen, če zanj velja, da če snarku odstranimo dve poljubni vozlišči postane 3-robno pobarljiv. 
+\end{definition}
+
+\begin{theorem}
+    Če je snark bikritičen, zanj velja, da je tudi kritičen.
+\end{theorem}
+
+\begin{definition}
+    Predpostavimo, da imamo snark $G = (V,E)$. Odpornost povezav $er(G)$ je je najmanjše 
+    število $k$ povezav, ki jih je treba odstraniti, da postane snark $G$ 3-robno obarljiv. 
+\end{definition}
+\pagebreak
 Koda, s katero sma računali odpornost povezav snarkov:
 \begin{lstlisting}
     def odpornost_povezav(snark):
@@ -92,24 +104,23 @@ Koda, s katero sma računali odpornost povezav snarkov:
                 if graf.chromatic_index() == 3:
                     return(i)
 \end{lstlisting}
-\pagebreak
+
 
 \begin{definition}
-    Predpostavimo, da imamo graf $G = (V,E)$. Odpornost vozlišč $vr(G)$ je najmanjše število $k$
-    vozlišč $E$, ki jih je treba odstraniti, da postane graf $G$ $k$-robno obarljiv.
+    Predpostavimo, da imamo snark $G = (V,E)$. Odpornost vozlišč $vr(G)$ je najmanjše število $k$
+    vozlišč $E$, ki jih je treba odstraniti, da postane graf $G$ 3-robno obarljiv.
 \end{definition}
 
 Koda, s katero sma izračunali odpornost vozlišč snarkov: 
 \begin{lstlisting}
-    def odpornost_povezav(snark):
+    def odpornost_vozlisc(snark):
+        st_vozlisc = Graph(snark).order()
         snark = Graph(snark)
-        seznam_povezav = snark.edges()
-        st_povezav = snark.size()
-        for i in range(st_povezav-3):
-            combo = Combinations(seznam_povezav,i).list()
+        for i in range(st_vozlisc-3):
+            combo = Combinations(range(st_vozlisc-1),i).list() 
             for kombinacija in combo:
                 graf = snark.copy()
-                graf.delete_edges(kombinacija)
+                graf.delete_vertices(kombinacija)
                 if graf.chromatic_index() == 3:
                     return(i)
 \end{lstlisting}
@@ -132,24 +143,33 @@ jih izračunali s pomočjo najine kode.
         \hline
         22 & 33 & 2 & 2 \\
         \hline
-        24 & 36 & $\ge 2$ & $\ge 2$ \\
+        24 & 36 & 2 & 2 \\
         \hline
-        26 & 39 & $\ge 2$ & $\ge 2$\\
+        26 & 39 & 2 & 2\\
         \hline 
-        28 & 42 & $\ge 2$ & $\ge 2$ \\
+        28 & 42 & 2 & 2 \\
         \hline
-        30 & 45 & $\ge 2$ & $\ge 2$ \\
+        30 & 45 & 2 & 2 \\
         \hline
-        32 & 48 & $\ge 2$ & $\ge 2$ \\
+        32 & 48 & 2 & 2 \\
         \hline
-        34 & 51 & $\ge 2$ & $\ge 2$ \\
+        34 & 51 & 2 & 2 \\
+        \hline
+        36 & 54 & 2 & 2 \\
+        \hline
+        38 & 57 & 2 & 2 \\
+        \hline
+        40 & 60 & 2 & 2 \\
+        \hline
+        44 & 66 & $ \ge 2$ & $ \ge 2$ \\
         \hline
     \end{tabular}
     \end{center}
 
 Ugotovili sva, da velja da za vsak poljuben snark $G$ velja, da je njegova $vr(G) \ge 2$ in
 njegova $er(G) \ge 2$. Poleg tega velja $er(G) = vr(G) $ Ugotovili sva, da so najmanjši
-snarki, katerih $vr(G) \ge 3$ snarki z 24 vozlišči in 36 povezavami.
+snarki, katerih $vr(G) \ge 3$ snarki z 44 vozlišči in 66 povezavami. Torej velja, da so vsi snarki,
+ki imajo manj kot 44 vozlišč krtični ali bikritični.
 
 
 
@@ -158,13 +178,16 @@ snarki, katerih $vr(G) \ge 3$ snarki z 24 vozlišči in 36 povezavami.
 \subsection*{Potek dela:}
 Najprej sva napisali program, ki je izračunal odpornost vozlišč $vr(G)$ in program, ki je 
 izračunal odpornost povezav $er(G)$ za snarke, ki sva jih prenesli iz House of Graphs.
-Programa sta v vsakem koraku iz danega snarka izbrisala eno naključno povezavo in vozlišče ter
+Programa sta v prvem koraku iz danega snarka izbrisala eno povezavo in vozlišče ter
 preverila, ali se je kromatični indeks snarka zmanjšal. Če se kromatični indeks snarka ni 
-spremenil, je program iz novonastalega grafa izbrisal še eno naključno povezavo ali vozlišče. To je 
-ponavljal, dokler kromatični indeks grafa ni bil enak 3. Ker je program odstranjeval naključne
-povezave, je bilo treba to kodo večkrat ponoviti in izbrali najmanjše število povezav ali vozlišč izmed
-izračunanih, da je vrednost odpornosti natančna. 
-Nato sva primerjali odpornost vozlišč in odpornost povezav danih snarkov. Na koncu sva s poskušanjem 
+spremenil, je program naredil seznam vseh možnih kombinacij dveh povezav in je za vsak element tega
+seznama preveri ali se kromatični indeks spremeni, če ga odstranimo iz originalnega snarka. Če se 
+kromatični indeks ne spremeni, program naredi seznam vseh možnih kombinacij treh povezav in treh vozlišč
+ter za vsak element tega seznama preveri, ali kromatični indeks ostane enak, če odstranimo ta element.
+To ponavlja, dokler kromatični indeks grafa ni enak 3. Ker je program preveril spremembo kromatičnega
+indeksa za vse možne kombinacije vozlišč in povezav, je bila njegova časovna zahtevnost zelo velika
+in se je v primeru, da smo ga uporabili na večjih snarkih ali večjem številu snarkov, izvajal vsaj nekaj ur.\\
+Na koncu sva primerjali odpornost vozlišč in odpornost povezav danih snarkov. Na koncu sva s poskušanjem 
 poiskali najmanjši snark za katerega velja, da ima $vr(G) \ge 3$.
 
 
